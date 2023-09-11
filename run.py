@@ -15,37 +15,8 @@ mpl.rcParams["mathtext.fontset"] = "cm"
 mpl.rcParams["font.family"] = "serif"
 mpl.rcParams["font.serif"] = "Computer Modern"
 
-def read_header(h):
-  """Make the ROOT C++ jit compiler read the specified header."""
-  ROOT.gROOT.ProcessLine('#include "%s"' % h)
 
-def provide_get_valid_handle(klass):
-  """Make the ROOT C++ jit compiler instantiate the
-     Event::getValidHandle member template for template
-     parameter klass."""
-  ROOT.gROOT.ProcessLine('template gallery::ValidHandle<%(name)s> gallery::Event::getValidHandle<%(name)s>(art::InputTag const&) const;' % {'name' : klass})
-
-### ------------------------------------------------------------------------ ###
-
-def get_is_particle_descendant(criteria_function, datatype, particle, acc=False):
-  if acc: return True
-  (event, i) = particle
-  if i == None: return False
-  return get_is_particle_descendant(criteria_function, datatype, get_mother(datatype, particle), acc or criteria_function(datatype, particle))
-
-def get_is_particle_descendant1(criteria_function, datatype, particle, acc=False):
-  (event, i) = particle
-  acc = False
-  while particle[1] != None and acc == False:
-    acc = acc or criteria_function(datatype, particle)
-    particle = get_mother(datatype, particle)
-  return acc
-
-def get_is_final_state(datatype, particle):
-  #return get_number_daughters(datatype, particle) == 0 # Old way of calculating
-  # StatusCode == 1 means stable final state
-  # StatusCode == 15 means final state nuclear remnant
-  return get_status_code(datatype, particle) in [1, 15]
+### --Event Attributes------------------------------------------------------ ###
 
 def get_nuance_code(datatype, event):
   # Event attribute
@@ -85,37 +56,24 @@ def get_number_particles(datatype, event):
     print("oops")
     return None
 
-def get_first_daughter_index(datatype, particle):
-  (event, i) = particle
-  if datatype == "gtrac":
-    index = event.StdHepFd[i]
-  elif datatype == "dunesw":
-    mc_particle = event.product()[0].GetParticle(i)
-    index = mc_particle.FirstDaughter()
-  else:
-    print("oops")
-    return None
-  if index == -1:
-    return None
-  else:
-    return index
 
-def get_last_daughter_index(datatype, particle):
+### --Particle Attributes--------------------------------------------------- ###
+
+def get_is_particle_descendant(criteria_function, datatype, particle, acc=False):
+  # Particle attribute
+  if acc: return True
   (event, i) = particle
-  if datatype == "gtrac":
-    index = event.StdHepLd[i]
-  elif datatype == "dunesw":
-    mc_particle = event.product()[0].GetParticle(i)
-    index = mc_particle.LastDaughter()
-  else:
-    print("oops")
-    return None
-  if index == -1:
-    return None
-  else:
-    return index
+  if i == None: return False
+  return get_is_particle_descendant(criteria_function, datatype, get_mother(datatype, particle), acc or criteria_function(datatype, particle))
+
+def get_is_final_state(datatype, particle):
+  # Particle attribute
+  # StatusCode == 1 means stable final state
+  # StatusCode == 15 means final state nuclear remnant
+  return get_status_code(datatype, particle) in [1, 15]
 
 def get_status_code(datatype, particle):
+  # Particle attribute
   (event, i) = particle
   if datatype == "dunesw":
     mc_particle = event.product()[0].GetParticle(i)
@@ -124,21 +82,12 @@ def get_status_code(datatype, particle):
     print("oops")
     return None
 
-def get_daughters(datatype, particle):
-  (event, i) = particle
-  acc = []
-  for j in range(get_number_particles(datatype, event)):
-    if get_mother_index(datatype, (event, j)) == i:
-      acc.append(j)
-  return acc
-
-def get_number_daughters(datatype, particle):
-  return len(get_daughters(datatype, particle))
-
 def get_name(datatype, particle):
+  # Particle attribute
   return get_particle_name(get_pdg_code(datatype, particle))
 
 def get_index(datatype, particle):
+  # Particle attribute
   (event, i) = particle
   return i
 
@@ -189,6 +138,70 @@ def get_pdg_code(datatype, particle):
   else:
     print("oops")
     return None
+
+def get_first_daughter_index(datatype, particle):
+  # Particle attribute
+  (event, i) = particle
+  if datatype == "gtrac":
+    index = event.StdHepFd[i]
+  elif datatype == "dunesw":
+    mc_particle = event.product()[0].GetParticle(i)
+    index = mc_particle.FirstDaughter()
+  else:
+    print("oops")
+    return None
+  if index == -1:
+    return None
+  else:
+    return index
+
+def get_last_daughter_index(datatype, particle):
+  # Particle attribute
+  (event, i) = particle
+  if datatype == "gtrac":
+    index = event.StdHepLd[i]
+  elif datatype == "dunesw":
+    mc_particle = event.product()[0].GetParticle(i)
+    index = mc_particle.LastDaughter()
+  else:
+    print("oops")
+    return None
+  if index == -1:
+    return None
+  else:
+    return index
+
+def get_daughters(datatype, particle):
+  # Particle attribute
+  (event, i) = particle
+  acc = []
+  for j in range(get_number_particles(datatype, event)):
+    if get_mother_index(datatype, (event, j)) == i:
+      acc.append(j)
+  return acc
+
+def get_number_daughters(datatype, particle):
+  # Particle attribute
+  return len(get_daughters(datatype, particle))
+
+def get_is_lepton_decay_product(datatype, particle): return get_is_leading_lepton(datatype, get_mother(datatype, particle))
+
+def get_is_interaction_product(datatype, particle): return get_is_initial_atom(datatype, get_mother(datatype, particle))
+
+def get_is_lepton_decay_topology(datatype, particle): 
+  return get_is_final_state(datatype, particle) \
+         and get_is_particle_descendant(get_is_leading_lepton, datatype, particle)
+
+def get_is_interaction_topology(datatype, particle): 
+  return get_is_final_state(datatype, particle) \
+         and get_is_particle_descendant(get_is_initial_atom, datatype, particle)
+
+def get_is_signal_charged_hadron(datatype, particle):
+  return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
+         and get_is_lepton_decay_topology(datatype, particle)
+
+
+### --Math------------------------------------------------------------------ ###
 
 def get_particle_name(pdg_code):
   try:
@@ -244,7 +257,6 @@ def get_sqrt_s(m_t, q_sq, x, y):
 def get_interaction_type(interaction_code, category):
   if interaction_code == 0:
     return None
-
   if category == "nuance":
     code_to_name = nuance_code_to_name
   elif category == "neut":
@@ -254,7 +266,6 @@ def get_interaction_type(interaction_code, category):
   else:
     print("oops")
     return None
-
   try:
     return code_to_name[interaction_code]
   except:
@@ -272,14 +283,25 @@ def get_simple_interaction_type(interaction_type):
     if possible_name in interaction_type.upper():
       return possible_name
 
+
+### --Event Loop Logic------------------------------------------------------ ###
+
+def read_header(h):
+  """Make the ROOT C++ jit compiler read the specified header."""
+  ROOT.gROOT.ProcessLine('#include "%s"' % h)
+
+def provide_get_valid_handle(klass):
+  """Make the ROOT C++ jit compiler instantiate the
+     Event::getValidHandle member template for template
+     parameter klass."""
+  ROOT.gROOT.ProcessLine('template gallery::ValidHandle<%(name)s> gallery::Event::getValidHandle<%(name)s>(art::InputTag const&) const;' % {'name' : klass})
+
 def get_event_attribute(attribute_function, datatype, event):
   return attribute_function(datatype, event)
 
 def get_particle_attribute(attribute_function, criteria_function, datatype, event):
   attribute = [attribute_function(datatype, (event, i)) for i in range(get_number_particles(datatype, event)) if criteria_function(datatype, (event, i))]
   return attribute
-
-### ----------------------------------------------------------------------- ###
 
 def get_attributes_gst(attribute_definitions, filename, sample_size=10):
   file = ROOT.TFile.Open(filename,"READ")
@@ -319,25 +341,6 @@ def get_attributes_gtrac(attribute_definitions, filename, sample_size=10):
     count += 1
   return attributes
 
-def dump_particle_list_dunesw(filename, sample_size=10):
-  mctruths_tag = ROOT.art.InputTag("generator")
-  datatype = "dunesw"
-  filenames = ROOT.vector(ROOT.string)(1, filename)
-  event = ROOT.gallery.Event(filenames)
-  get_mctruths = event.getValidHandle[ROOT.vector(ROOT.simb.MCTruth)]
-  count = 0
-  while (not event.atEnd()) :
-    mctruths = get_mctruths(mctruths_tag)
-    if count >= sample_size or mctruths.empty(): break
-    print()
-    print("~~~~~~~ Event", count, "~~~~~~~")
-    for i in range(get_number_particles(datatype, mctruths)):
-      particle = (mctruths, i)
-      daughters = get_daughters(datatype, particle)
-      print(i, get_particle_name(get_pdg_code(datatype, particle)), "kiddos:", daughters)
-    count += 1
-    event.next()
-
 def get_attributes_dunesw(attribute_definitions, filename, sample_size=10):
   mctruths_tag = ROOT.art.InputTag("generator")
   filenames = ROOT.vector(ROOT.string)(1, filename)
@@ -360,7 +363,27 @@ def get_attributes_dunesw(attribute_definitions, filename, sample_size=10):
     event.next()
   return attributes
 
-### ----------------------------------------------------------------------- ###
+def dump_particle_list_dunesw(filename, sample_size=10):
+  mctruths_tag = ROOT.art.InputTag("generator")
+  datatype = "dunesw"
+  filenames = ROOT.vector(ROOT.string)(1, filename)
+  event = ROOT.gallery.Event(filenames)
+  get_mctruths = event.getValidHandle[ROOT.vector(ROOT.simb.MCTruth)]
+  count = 0
+  while (not event.atEnd()) :
+    mctruths = get_mctruths(mctruths_tag)
+    if count >= sample_size or mctruths.empty(): break
+    print()
+    print("~~~~~~~ Event", count, "~~~~~~~")
+    for i in range(get_number_particles(datatype, mctruths)):
+      particle = (mctruths, i)
+      daughters = get_daughters(datatype, particle)
+      print(i, get_particle_name(get_pdg_code(datatype, particle)), "kiddos:", daughters)
+    count += 1
+    event.next()
+
+
+### --More Math------------------------------------------------------------ ###
 
 def count_elts(my_list):
   elt_counts = {}
@@ -370,9 +393,11 @@ def count_elts(my_list):
     elt_counts[elt] += 1
   return elt_counts
 
-#def normalize(my_list):
-  #total = reduce(add, my_list)
-  #return [elt/total for elt in my_list]
+def get_tau_decay_type(tau_decay_product_set):
+  for possible_decay_product_name, possible_decay_product_sets in tau_decay_modes_simple.items():
+    if tau_decay_product_set in possible_decay_product_sets:
+      return possible_decay_product_name
+  return None
 
 def flatten_1d(list_of_lists):
   return [row[0] if len(row)==1 else None for row in list_of_lists]
@@ -386,6 +411,9 @@ def get_knitted_dictionaries(a, b): # knit two sets of keys and values into one 
     value_pairs_dict[key] = (a[key] if key in a else 0, b[key] if key in b else 0) 
   return value_pairs_dict
 
+
+### --Graph Types----------------------------------------------------------- ###
+
 def get_bar_graph(counted_set, y_label):
   width = 0.8
   fig, ax = plt.subplots()
@@ -397,22 +425,6 @@ def get_bar_graph(counted_set, y_label):
   ax.set_ylabel(y_label)
   dunestyle.Simulation(ax=ax)
   return fig
-
-### ----------------------------------------------------------------------- ###
-
-def get_is_initial_neutrino(datatype, particle): 
-  return get_index(datatype, particle) == 0 \
-         and get_pdg_code(datatype, particle) == pdg_code["tau neutrino"] \
-         and get_mother_index(datatype, particle) == None
-def get_is_leading_lepton(datatype, particle): 
-  return get_index(datatype, particle) == 4 \
-         and get_pdg_code(datatype, particle) == pdg_code["tau"] \
-         and get_mother_index(datatype, particle) == 0 \
-         and get_pdg_code(datatype, get_mother(datatype, particle)) == pdg_code["tau neutrino"]
-def get_is_initial_atom(datatype, particle): 
-  return get_index(datatype, particle) == 1 \
-         and get_pdg_code(datatype, particle) == pdg_code["argon"]  \
-         and get_mother_index(datatype, particle) == None
 
 def get_double_bar_graph(item_pairs, datum_labels, colors, y_label):
   fig, ax = plt.subplots()
@@ -437,6 +449,23 @@ def get_one_parameter_histogram(data, datum_labels, edge_colors, x_label, y_labe
   ax.legend()
   dunestyle.Simulation(ax=ax)
   return fig
+
+
+### ---GENIE Comparison Analysis-------------------------------------------- ###
+
+def get_is_initial_neutrino(datatype, particle): 
+  return get_index(datatype, particle) == 0 \
+         and get_pdg_code(datatype, particle) == pdg_code["tau neutrino"] \
+         and get_mother_index(datatype, particle) == None
+def get_is_leading_lepton(datatype, particle): 
+  return get_index(datatype, particle) == 4 \
+         and get_pdg_code(datatype, particle) == pdg_code["tau"] \
+         and get_mother_index(datatype, particle) == 0 \
+         and get_pdg_code(datatype, get_mother(datatype, particle)) == pdg_code["tau neutrino"]
+def get_is_initial_atom(datatype, particle): 
+  return get_index(datatype, particle) == 1 \
+         and get_pdg_code(datatype, particle) == pdg_code["argon"]  \
+         and get_mother_index(datatype, particle) == None
 
 def get_energy_comparison_histogram(sample_size):
   tau_dunesw = get_attributes_dunesw([("initial_neutrino_four_momenta", get_four_momentum, get_is_initial_neutrino)],
@@ -507,35 +536,8 @@ def get_interaction_type_bar_graph(sample_size):
   return get_double_bar_graph(dict(sorted(interaction_type_pairs.items(), key=lambda item: item[1], reverse=True)),
                               ["dunesw genie", "standalone genie"], ["#D55E00", "#56B4E9"], "Percent of events")
 
-### ----------------------------------------------------------------------- ###
 
-#def get_tau_decay_type(tau_decay_product_set):
-  #for possible_decay_product_name, possible_decay_product_set in tau_decay_topologies.items():
-    #if tau_decay_product_set == possible_decay_product_set:
-      #return possible_decay_product_name
-  #return None
-
-def get_tau_decay_type(tau_decay_product_set):
-  for possible_decay_product_name, possible_decay_product_sets in tau_decay_modes_simple.items():
-    if tau_decay_product_set in possible_decay_product_sets:
-      return possible_decay_product_name
-  return None
-
-def get_is_lepton_decay_product(datatype, particle): return get_is_leading_lepton(datatype, get_mother(datatype, particle))
-
-def get_is_interaction_product(datatype, particle): return get_is_initial_atom(datatype, get_mother(datatype, particle))
-
-def get_is_lepton_decay_topology(datatype, particle): 
-  return get_is_final_state(datatype, particle) \
-         and get_is_particle_descendant(get_is_leading_lepton, datatype, particle)
-
-def get_is_interaction_topology(datatype, particle): 
-  return get_is_final_state(datatype, particle) \
-         and get_is_particle_descendant(get_is_initial_atom, datatype, particle)
-
-def get_is_signal_charged_hadron(datatype, particle):
-  return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
-         and get_is_lepton_decay_topology(datatype, particle)
+### --Tau Decay Analysis---------------------------------------------------- ###
 
 def get_is_background_charged_hadron(datatype, particle):
   return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
@@ -712,10 +714,7 @@ def main():
 
   fig9 = get_prong_histogram(10000) 
   fig9.show()
-  fig9.savefig("/nashome/t/tlabree/img/"+today+"/prong.svg")
-  #for k,v in voidstar.items():
-    #print(k, ":", v[90])
-  #fig9.show()
+  #fig9.savefig("/nashome/t/tlabree/img/"+today+"/prong.svg")
 
   #draw_decay_chain()
 
