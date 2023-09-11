@@ -15,6 +15,8 @@ mpl.rcParams["mathtext.fontset"] = "cm"
 mpl.rcParams["font.family"] = "serif"
 mpl.rcParams["font.serif"] = "Computer Modern"
 
+dune_colors = ['#D55E00', '#56B4E9', '#E69F00']
+okabe_ito_colors = ['#000000', '#D55E00', '#56B4E9', '#E69F00', '#009E73', '#CC79A7', '#0072B2', '#F0E442']
 
 ### --Event Attributes------------------------------------------------------ ###
 
@@ -543,74 +545,6 @@ def get_interaction_type_bar_graph(sample_size):
 
 ### --Tau Decay Analysis---------------------------------------------------- ###
 
-def get_topology_lists(sample_size):
-  attribute_definitions = [("topology_lists", get_name, get_is_final_state),
-                           ("tau_decay_topology_lists", get_name, get_is_lepton_decay_topology),
-                           ("interaction_topology_lists", get_name, get_is_interaction_topology)]
-  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  tau_dunesw["tau_decay_types"] = [get_tau_decay_type(count_elts(product_set)) for product_set in tau_dunesw["tau_decay_topology_lists"]]
-  return tau_dunesw
-
-def get_tau_decay_product_list(sample_size):
-  attribute_definitions =[("lepton_decay_product_lists", get_name, get_is_lepton_decay_topology),
-                          ("interaction_product_lists", get_name, get_is_interaction_topology)] 
-  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  tau_dunesw["lepton_decay_product_sets"] = [count_elts(product_list) for product_list in tau_dunesw["lepton_decay_topology_lists"]]
-  tau_dunesw["lepton_decay_type"] = [get_tau_decay_type(product_set) for product_set in tau_dunesw["lepton_decay_topology_lists"]]
-  #tau_dunesw_interaction_percent = {k: "{:.2f}%".format(v/sample_size*100) for k, v in count_elts(tau_dunesw["lepton_decay_type"]).items()}
-  #tau_dunesw_interaction_counts = {k: v for k, v in count_elts(tau_dunesw["lepton_decay_type"]).items()}
-  #print(tau_dunesw_interaction_percent)
-  return get_bar_graph(tau_dunesw_interaction_percent, "Percent of events")
-
-def get_charged_hadron_angles(sample_size):
-  attribute_definitions =[("initial_neutrino_four_momenta", get_four_momentum, get_is_initial_neutrino),
-                          ("signal_four_momenta", get_four_momentum, get_is_signal_charged_hadron),
-                          ("background_four_momenta", get_four_momentum, get_is_background_charged_hadron)] 
-  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  def get_angle(a, b): return get_scattering_angle(get_momentum(a), get_momentum(b))
-  def get_angles(xs, ys): return [map(get_angle, x, [y[0]]*len(x)) for (x,y) in zip(xs, ys)]
-  tau_dunesw["signal_angles"] = get_angles(tau_dunesw["signal_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
-  tau_dunesw["background_angles"] = get_angles(tau_dunesw["background_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
-  return tau_dunesw
-
-def get_charged_hadron_angle_histogram(sample_size):
-  tau_dunesw = get_charged_hadron_angles(sample_size)
-  return get_one_parameter_histogram([flatten(tau_dunesw["signal_angles"]), flatten(tau_dunesw["background_angles"])],
-                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
-                                     "Angle of charged hadrons (rad)", "Number of events",
-                                     (0,3.1415), 100)
-
-def get_charged_hadron_energies(sample_size):
-  attribute_definitions =[("signal_four_momenta", get_four_momentum, get_is_signal_charged_hadron),
-                          ("background_four_momenta", get_four_momentum, get_is_background_charged_hadron)] 
-  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  tau_dunesw["signal_energies"] = [list(map(get_energy, row)) for row in tau_dunesw["signal_four_momenta"]]
-  tau_dunesw["background_energies"] =[list(map(get_energy, row)) for row in tau_dunesw["background_four_momenta"]] 
-  return tau_dunesw
-
-def get_charged_hadron_energy_histogram(sample_size):
-  tau_dunesw = get_charged_hadron_energies(sample_size)
-  return get_one_parameter_histogram([flatten(tau_dunesw["signal_energies"]), flatten(tau_dunesw["background_energies"])],
-                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
-                                     "Energy of charged hadrons (GeV)", "Number of events",
-                                     (0,20), 100)
-
-def get_charged_hadron_counts(sample_size):
-  def get_one(datatype, particle): return 1
-  attribute_definitions =[("signal_bools", get_one, get_is_signal_charged_hadron),
-                          ("background_bools", get_one, get_is_background_charged_hadron)] 
-  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  tau_dunesw["signal_counts"] = list(map(lambda x : len(x), tau_dunesw["signal_bools"]))
-  tau_dunesw["background_counts"] = list(map(lambda x : len(x), tau_dunesw["background_bools"]))
-  return tau_dunesw
-
-def get_charged_hadron_count_histogram(sample_size):
-  tau_dunesw = get_charged_hadron_counts(sample_size)
-  return get_one_parameter_histogram([tau_dunesw["signal_counts"], tau_dunesw["background_counts"]],
-                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
-                                     "Number of charged hadrons", "Number of events",
-                                     (0,10), 10)
-
 def read_interaction_types(sample_size):
   attribute_definitions = [("nuance_codes", get_nuance_code, None),
                            ("scattering_codes", get_scattering_code, None)]
@@ -642,45 +576,47 @@ def read_charged_hadron_kinematics(sample_size):
   tau_dunesw["nuclear_charged_hadron_angles"] = get_angles_from_momenta(tau_dunesw["nuclear_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
   return tau_dunesw
 
-def read_tau_analysis_parameters(sample_size):
-  tau_dunesw = read_interaction_types(sample_size)
-  tau_dunesw.update(read_topologies(sample_size))
-  tau_dunesw.update(read_charged_hadron_kinematics(sample_size))
+## -- ##
+
+def get_charged_hadron_energy_histogram(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  return get_one_parameter_histogram([flatten(tau_dunesw["decay_charged_hadron_energies"]), flatten(tau_dunesw["nuclear_charged_hadron_energies"])],
+                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
+                                     "Energy of charged hadrons (GeV)", "Number of events",
+                                     (0,20), 100)
+
+def get_charged_hadron_angle_histogram(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  return get_one_parameter_histogram([flatten(tau_dunesw["decay_charged_hadron_angles"]), flatten(tau_dunesw["nuclear_charged_hadron_angles"])],
+                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
+                                     "Angle of charged hadrons (rad)", "Number of events",
+                                     (0,3.1415), 100)
+
+def get_charged_hadron_counts(sample_size):
+  charged_hadrons = ["pi+", "pi-", "K+", "K-"]
+  tau_dunesw = read_topologies(sample_size)
+  tau_dunesw["decay_charged_hadron_counts"] = [sum([1 for particle in topology if particle in charged_hadrons]) for topology in tau_dunesw["decay_topologies"] if topology is not None]
+  tau_dunesw["nuclear_charged_hadron_counts"] = [sum([1 for particle in topology if particle in charged_hadrons]) for topology in tau_dunesw["nuclear_topologies"] if topology is not None]
   return tau_dunesw
 
-def get_prong_histogram(sample_size):
-  tau_dunesw = read_tau_analysis_parameters(sample_size)
-  decay_data = [x for (x, y) in zip(tau_dunesw["decay_prong"], tau_dunesw["interaction_types"])]
-  nuclear_data0 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "QE"]
-  nuclear_data1 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "RES"]
-  nuclear_data2 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "DIS"]
-  nuclear_data3 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "MEC"]
+def get_charged_hadron_count_histogram(sample_size):
+  tau_dunesw = get_charged_hadron_counts(sample_size)
+  return get_one_parameter_histogram([tau_dunesw["decay_charged_hadron_counts"], tau_dunesw["nuclear_charged_hadron_counts"]],
+                                     ["tau decay", "atomic interaction"], ["#D55E00", "#56B4E9"],
+                                     "Number of charged hadrons", "Number of events",
+                                     (0,10), 10)
+
+def get_charged_hadron_count_histogram_split(sample_size):
+  tau_dunesw = get_charged_hadron_counts(sample_size)
+  tau_dunesw.update(read_interaction_types(sample_size))
+  decay_data = [x for (x, y) in zip(tau_dunesw["decay_charged_hadron_counts"], tau_dunesw["interaction_types"])]
+  nuclear_data0 = [x for (x, y) in zip(tau_dunesw["nuclear_charged_hadron_counts"], tau_dunesw["interaction_types"]) if y == "QE"]
+  nuclear_data1 = [x for (x, y) in zip(tau_dunesw["nuclear_charged_hadron_counts"], tau_dunesw["interaction_types"]) if y == "RES"]
+  nuclear_data2 = [x for (x, y) in zip(tau_dunesw["nuclear_charged_hadron_counts"], tau_dunesw["interaction_types"]) if y == "DIS"]
+  nuclear_data3 = [x for (x, y) in zip(tau_dunesw["nuclear_charged_hadron_counts"], tau_dunesw["interaction_types"]) if y == "MEC"]
   return get_one_parameter_histogram([decay_data, nuclear_data0, nuclear_data1, nuclear_data2, nuclear_data3],
                                      ["tau decay", "nuclear interaction QE", "nuclear interaction RES", "nuclear interaction DIS", "nuclear interaction MEC"],
                                      ["#000000", "#56B4E9", "#D55E00", "#009E73", "#E69F00"],
                                      "Prong (# of charged hadrons)", "Number of events",
                                      (0,10), 10)
-#dune_colors = ['#D55E00', '#56B4E9', '#E69F00']
-#okabe_ito_colors = ['#000000', '#D55E00', '#56B4E9', '#E69F00', '#009E73', '#CC79A7', '#0072B2', '#F0E442']
-
-def draw_decay_chain():
-  dfp = DecFileParser("decays.dec")
-  dfp.parse()
-  #print(dfp.expand_decay_modes("tau-"))
-  #chains = dfp.build_decay_chains("tau-")
-  #my_dict = {}
-  #print(next(iter(chain.keys())) in my_dict)
-  #x = [print(elt) for elt in chain["tau-"]]
-  #print(chain["tau-"][0])
-
-  #decay_chains = [DecayChain("tau-", chains) for chain in chains["tau-"]]
-  #decay_chains = []
-  #decay_chains[0] = DecayChain("tau-", chains["tau-"][0])
-  #decay_chains[0].print_as_tree()
-  #print(chain["tau-"])
-  #dc = DecayChain("tau-", chain["tau-"])
-  #print(dc)
-  #chain = dc.flatten().to_dict()    
-  #dcv = DecayChainViewer(chain)
-  #dcv.graph.render(filename="test", format="svg", view=True, cleanup=True)
 
