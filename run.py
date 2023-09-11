@@ -611,37 +611,45 @@ def get_charged_hadron_count_histogram(sample_size):
                                      "Number of charged hadrons", "Number of events",
                                      (0,10), 10)
 
-def get_tau_analysis_parameters(sample_size):
+def read_interaction_types(sample_size):
   attribute_definitions = [("nuance_codes", get_nuance_code, None),
-                           ("scattering_codes", get_scattering_code, None),
-                           ("initial_neutrino_four_momenta", get_four_momentum, get_is_initial_neutrino),
-                           ("decay_charged_hadron_four_momenta", get_four_momentum, get_is_signal_charged_hadron),
-                           ("nuclear_charged_hadron_four_momenta", get_four_momentum, get_is_background_charged_hadron),
-                           ("topologies", get_name, get_is_final_state),
-                           ("decay_topologies", get_name, get_is_lepton_decay_topology),
-                           ("nuclear_topologies", get_name, get_is_interaction_topology)]
+                           ("scattering_codes", get_scattering_code, None)]
   tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
-  tau_dunesw["initial_neutrino_four_momenta"] = flatten(tau_dunesw["initial_neutrino_four_momenta"])
-
   tau_dunesw["nuance_types"] = [get_interaction_type(nuance_code, "nuance") for nuance_code in tau_dunesw["nuance_codes"]]
   tau_dunesw["scattering_types"] = [get_interaction_type(scattering_code, "scattering") for scattering_code in tau_dunesw["scattering_codes"]]
   tau_dunesw["interaction_types"] = [get_simple_interaction_type(get_type_fallback(nuance_type, scattering_type)) for (nuance_type, scattering_type) in zip(tau_dunesw["nuance_types"], tau_dunesw["scattering_types"])]
+  return tau_dunesw
+
+def read_topologies(sample_size):
+  attribute_definitions = [("topologies", get_name, get_is_final_state),
+                           ("decay_topologies", get_name, get_is_lepton_decay_topology),
+                           ("nuclear_topologies", get_name, get_is_interaction_topology)]
+  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
   tau_dunesw["tau_decay_types"] = [get_tau_decay_type(count_elts(product_set)) for product_set in tau_dunesw["decay_topologies"]]
+  return tau_dunesw
 
-  tau_dunesw["decay_prong"] = list(map(lambda x : len(x), tau_dunesw["decay_charged_hadron_four_momenta"]))
-  tau_dunesw["nuclear_prong"] = list(map(lambda x : len(x), tau_dunesw["nuclear_charged_hadron_four_momenta"]))
-
+def read_charged_hadron_kinematics(sample_size):
+  def get_angle_from_momenta(a, b): return get_scattering_angle(get_momentum(a), get_momentum(b))
+  def get_angles_from_momenta(xs, ys): return [list(map(get_angle_from_momenta, x, [y]*len(x))) for (x,y) in zip(xs, ys)]
+  attribute_definitions = [("initial_neutrino_four_momenta", get_four_momentum, get_is_initial_neutrino),
+                           ("decay_charged_hadron_four_momenta", get_four_momentum, get_is_signal_charged_hadron),
+                           ("nuclear_charged_hadron_four_momenta", get_four_momentum, get_is_background_charged_hadron)]
+  tau_dunesw = get_attributes_dunesw(attribute_definitions, "prodgenie_nutau_dune10kt_gen.root", sample_size)
+  tau_dunesw["initial_neutrino_four_momenta"] = flatten(tau_dunesw["initial_neutrino_four_momenta"])
   tau_dunesw["decay_charged_hadron_energies"] = [list(map(get_energy, row)) for row in tau_dunesw["decay_charged_hadron_four_momenta"]]
   tau_dunesw["nuclear_charged_hadron_energies"] =[list(map(get_energy, row)) for row in tau_dunesw["nuclear_charged_hadron_four_momenta"]] 
+  tau_dunesw["decay_charged_hadron_angles"] = get_angles_from_momenta(tau_dunesw["decay_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
+  tau_dunesw["nuclear_charged_hadron_angles"] = get_angles_from_momenta(tau_dunesw["nuclear_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
+  return tau_dunesw
 
-  def get_angle(a, b): return get_scattering_angle(get_momentum(a), get_momentum(b))
-  def get_angles(xs, ys): return [list(map(get_angle, x, [y]*len(x))) for (x,y) in zip(xs, ys)]
-  tau_dunesw["decay_charged_hadron_angles"] = get_angles(tau_dunesw["decay_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
-  tau_dunesw["nuclear_charged_hadron_angles"] = get_angles(tau_dunesw["nuclear_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
+def read_tau_analysis_parameters(sample_size):
+  tau_dunesw = read_interaction_types(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  tau_dunesw.update(read_charged_hadron_kinematics(sample_size))
   return tau_dunesw
 
 def get_prong_histogram(sample_size):
-  tau_dunesw = get_tau_analysis_parameters(sample_size)
+  tau_dunesw = read_tau_analysis_parameters(sample_size)
   decay_data = [x for (x, y) in zip(tau_dunesw["decay_prong"], tau_dunesw["interaction_types"])]
   nuclear_data0 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "QE"]
   nuclear_data1 = [x for (x, y) in zip(tau_dunesw["nuclear_prong"], tau_dunesw["interaction_types"]) if y == "RES"]
@@ -712,11 +720,11 @@ def main():
   #fig8.show()
   #fig8.savefig("/nashome/t/tlabree/img/"+today+"/charged_hadron_count.svg")
 
-  fig9 = get_prong_histogram(10000) 
-  fig9.show()
+  x = read_tau_analysis_parameters1(100)
+  print(x)
+  #fig9 = get_prong_histogram(10000) 
+  #fig9.show()
   #fig9.savefig("/nashome/t/tlabree/img/"+today+"/prong.svg")
-
-  #draw_decay_chain()
 
   input("Press Enter to continue...")
   
