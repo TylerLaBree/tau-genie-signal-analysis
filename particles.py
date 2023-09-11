@@ -29,10 +29,10 @@ tau_decay_modes_simple = {
                       {"pi-": 1, "e+": 1, "e-": 1, "gamma": 5, "nu(tau)": 1},
                       {"pi-": 1, "e+": 2, "e-": 2, "gamma": 4, "nu(tau)": 1},
                       {"pi-": 1, "e+": 3, "e-": 3, "gamma": 3, "nu(tau)": 1},
-                      {"K-": 1, "gamma": 6, "nu(tau)": 1}],
+                      {"K-": 1, "gamma": 6, "nu(tau)": 1},
                       {"K-": 1, "e+": 1, "e-": 1, "gamma": 5, "nu(tau)": 1},
                       {"K-": 1, "e+": 2, "e-": 2, "gamma": 4, "nu(tau)": 1},
-                      {"K-": 1, "e+": 3, "e-": 3, "gamma": 3, "nu(tau)": 1},
+                      {"K-": 1, "e+": 3, "e-": 3, "gamma": 3, "nu(tau)": 1}],
   # 3-prong 0pi0 - 9.1%
   "pi- h- h+ nu(tau)": [{"pi-": 2, "pi+": 1, "nu(tau)": 1},
                         {"pi-": 1, "K-": 1, "K+": 1, "nu(tau)": 1}],
