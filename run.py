@@ -200,6 +200,10 @@ def get_is_signal_charged_hadron(datatype, particle):
   return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
          and get_is_lepton_decay_topology(datatype, particle)
 
+def get_is_background_charged_hadron(datatype, particle):
+  return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
+         and get_is_interaction_topology(datatype, particle)
+
 
 ### --Math------------------------------------------------------------------ ###
 
@@ -538,10 +542,6 @@ def get_interaction_type_bar_graph(sample_size):
 
 
 ### --Tau Decay Analysis---------------------------------------------------- ###
-
-def get_is_background_charged_hadron(datatype, particle):
-  return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
-         and get_is_interaction_topology(datatype, particle)
 
 def get_topology_lists(sample_size):
   attribute_definitions = [("topology_lists", get_name, get_is_final_state),
