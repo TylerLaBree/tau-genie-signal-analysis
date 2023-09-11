@@ -3,61 +3,48 @@
 ### quality particle data-base ###
 
 tau_decay_modes_simple = {
-  # mu leptonic
-  "mu- nu(mu)~ nu(tau)": [{"mu-": 1, "nu(mu)~": 1, "nu(tau)": 1}],                                # 17.4%
-  # e leptonic
-  "e- nu(e)~ nu(tau)": [{"e-": 1, "nu(e)~": 1, "nu(tau)": 1}],                                    # 17.8%
-  # 1-prong 0pi0
+  ### LEPTONIC ###
+  # mu - 17.4%
+  "mu- nu(mu)~ nu(tau)": [{"mu-": 1, "nu(mu)~": 1, "nu(tau)": 1}],
+  # e - 17.8%
+  "e- nu(e)~ nu(tau)": [{"e-": 1, "nu(e)~": 1, "nu(tau)": 1}],
+  ### HADRONIC ###
+  # 1-prong 0pi0 - 11.5%
   "h- nu(tau)": [{"pi-": 1, "nu(tau)": 1},
-                 {"K-": 1, "nu(tau)": 1}],                                                        # 11.5%
-  # 1-prong 1pi0
+                 {"K-": 1, "nu(tau)": 1}],
+  # 1-prong 1pi0 - 25.9%
   "h- pi0 nu(tau)": [{"pi-": 1, "gamma": 2, "nu(tau)": 1},
                      {"pi-": 1, "e+": 1, "e-": 1, "gamma": 1, "nu(tau)": 1},
-                     {"K-": 1, "gamma": 2, "nu(tau)": 1}],                                        # 25.9%
-  # 1-prong 2pi0
+                     {"K-": 1, "gamma": 2, "nu(tau)": 1},
+                     {"K-": 1, "e+": 1, "e-": 1, "gamma": 1, "nu(tau)": 1}],
+  # 1-prong 2pi0 - 9.7%
   "h- 2pi0 nu(tau)": [{"pi-": 1, "gamma": 4, "nu(tau)": 1},
                       {"pi-": 1, "e+": 1, "e-": 1, "gamma": 3, "nu(tau)": 1},
-                      {"K-": 1, "gamma": 4, "nu(tau)": 1}],                                       #  9.7%
-  # 1-prong 3pi0
+                      {"pi-": 1, "e+": 2, "e-": 2, "gamma": 2, "nu(tau)": 1},
+                      {"K-": 1, "gamma": 4, "nu(tau)": 1},
+                      {"K-": 1, "e+": 1, "e-": 1, "gamma": 3, "nu(tau)": 1},
+                      {"K-": 1, "e+": 2, "e-": 2, "gamma": 2, "nu(tau)": 1}],
+  # 1-prong 3pi0 - 1.1%
   "h- 3pi0 nu(tau)": [{"pi-": 1, "gamma": 6, "nu(tau)": 1},
                       {"pi-": 1, "e+": 1, "e-": 1, "gamma": 5, "nu(tau)": 1},
-                      {"K-": 1, "gamma": 6, "nu(tau)": 1}],                                       #  1.1%
-  # 3-prong 0pi0
+                      {"pi-": 1, "e+": 2, "e-": 2, "gamma": 4, "nu(tau)": 1},
+                      {"pi-": 1, "e+": 3, "e-": 3, "gamma": 3, "nu(tau)": 1},
+                      {"K-": 1, "gamma": 6, "nu(tau)": 1}],
+                      {"K-": 1, "e+": 1, "e-": 1, "gamma": 5, "nu(tau)": 1},
+                      {"K-": 1, "e+": 2, "e-": 2, "gamma": 4, "nu(tau)": 1},
+                      {"K-": 1, "e+": 3, "e-": 3, "gamma": 3, "nu(tau)": 1},
+  # 3-prong 0pi0 - 9.1%
   "pi- h- h+ nu(tau)": [{"pi-": 2, "pi+": 1, "nu(tau)": 1},
-                        {"pi-": 1, "K-": 1, "K+": 1, "nu(tau)": 1}],                              #  9.1%
-  # 3(1)-prong 1pi0(omega)
+                        {"pi-": 1, "K-": 1, "K+": 1, "nu(tau)": 1}],
+  # 3(1)-prong 1pi0(omega) - 4.5%
   "pi- omega/(pi- p+ pi0) nu(tau)": [{"pi-": 2, "pi+": 1, "gamma": 2, "nu(tau)": 1},
                                      {"pi-": 2, "pi+": 1, "e+": 1, "e-": 1, "gamma": 1, "nu(tau)": 1},
-                                     {"pi-": 1, "gamma": 3, "nu(tau)": 1}],                       #  4.5%
-  # 3(1)-prong 2pi0(1pi0 omega)
-  #"h- omega/(h- h+ pi0) pi0 nu(tau)": [{"pi-": 2, "pi+": 1, "gamma": 4, "nu(tau)": 1},
-  #{"pi-": 1, "K-": 1, "K+": 1, "gamma": 4, "nu(tau)": 1},
-  #{"pi-": 2, "pi+": 1, "e+": 1, "e-": 1, "gamma": 3, "nu(tau)": 1},
-  #]          #  0.5%
-  # other                                                                                            3.0%
-}
-
-tau_decay_topologies = {
-  "mu- nu(mu)~ nu(tau)": {"mu-": 1, "nu(mu)~": 1, "nu(tau)": 1},                                  # 17.4%
-  "e- nu(e)~ nu(tau)": {"e-": 1, "nu(e)~": 1, "nu(tau)": 1},                                      # 17.8%
-  "pi- nu(tau)": {"pi-": 1, "nu(tau)": 1},                                                        # 10.8%
-  "K- nu(tau)": {"K-": 1, "nu(tau)": 1},                                                          #  0.7%
-  "pi- pi0(a) nu(tau)": {"pi-": 1, "gamma": 2, "nu(tau)": 1},                                     # 25.2%
-  "pi- pi0(b) nu(tau)": {"pi-": 1, "e+": 1, "e-": 1, "gamma": 1, "nu(tau)": 1},                   #  0.3%
-  "K- pi0(a) nu(tau)": {"K-": 1, "gamma": 2, "nu(tau)": 1},                                       #  0.4%
-  "pi- 2pi0(aa) nu(tau)": {"pi-": 1, "gamma": 4, "nu(tau)": 1},                                   #  9.0%
-  "pi- 2pi0(ab) nu(tau)": {"pi-": 1, "e+": 1, "e-": 1, "gamma": 3, "nu(tau)": 1},                 #  0.1%
-  "K- 2pi0(aa) nu(tau)": {"K-": 1, "gamma": 4, "nu(tau)": 1},                                     #  0.6%
-  "pi- 3pi0(aaa) nu(tau)": {"pi-": 1, "gamma": 6, "nu(tau)": 1},                                  #  1.0%
-  "pi- 3pi0(aab) nu(tau)": {"pi-": 1, "e+": 1, "e-": 1, "gamma": 5, "nu(tau)": 1},                #  0.01%
-  "K- 3pi0(aaa) nu(tau)": {"K-": 1, "gamma": 6, "nu(tau)": 1},                                    #  0.05%
-  #"pi- K~0 nu(tau)": {"pi-": 1, "K~0": 1, "nu(tau)": 1}, #  0.8%
-  #"K- K~0 nu(tau)": {"K-": 1, "K~0": 1, "nu(tau)": 1}, #  0.2%
-  "pi- pi- pi+ nu(tau)": {"pi-": 2, "pi+": 1, "nu(tau)": 1},                                      #  9.0%
-  "pi- [pi- pi+ pi0(a)]/[omega(aa)]  nu(tau)": {"pi-": 2, "pi+": 1, "gamma": 2, "nu(tau)": 1},    #  4.37%
-  "pi- [pi- pi+ pi0(b)]/[omega(ab)] nu(tau)": {"pi-": 2, "pi+": 1, "e+": 1, "e-": 1, "gamma": 1, "nu(tau)": 1}, #  0.06%
-  "pi- omega(ba) nu(tau)": {"pi-": 1, "gamma": 3, "nu(tau)": 1},                                  #  0.16%
-  # other                                                                                            3.1%
+                                     {"pi-": 1, "gamma": 3, "nu(tau)": 1}],
+  # 3(1)-prong 2pi0(1pi0 omega) - 0.5%?
+  "h- omega/(h- h+ pi0) pi0 nu(tau)": [{"pi-": 2, "pi+": 1, "gamma": 4, "nu(tau)": 1},
+                                       {"pi-": 1, "K-": 1, "K+": 1, "gamma": 4, "nu(tau)": 1},
+                                       {"pi-": 2, "pi+": 1, "e+": 1, "e-": 1, "gamma": 3, "nu(tau)": 1}]
+  # other - 3.0%
 }
 
 pi0_decay_modes = [{"gamma": 2},                    # 98.8%
