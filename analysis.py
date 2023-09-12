@@ -1,3 +1,5 @@
+### A series of tools for analyzing tau neutrino events using DUNE software(dunesw)-wrapped GENIE ###
+
 import ROOT
 import dunestyle.matplotlib as dunestyle
 import matplotlib.pyplot as plt
