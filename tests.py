@@ -1,3 +1,5 @@
+### Run a series of tests. User should verify tests are passed by eye. ###
+
 from analysis import *
 
 read_header('gallery/ValidHandle.h')
