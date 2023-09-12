@@ -1,8 +1,7 @@
-from run import *
+from analysis import *
 
 read_header('gallery/ValidHandle.h')
 provide_get_valid_handle('std::vector<simb::MCTruth>')
-today = datetime.today().strftime('%Y-%m-%d')
 
 sample_size = 100
 
