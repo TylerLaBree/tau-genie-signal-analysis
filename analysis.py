@@ -1,15 +1,10 @@
-import os, sys
 import ROOT
+import dunestyle.matplotlib as dunestyle
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
-import dunestyle.matplotlib as dunestyle
 from particles import *
 from particle import Particle
-from decaylanguage import DecFileParser, DecayChainViewer, DecayChain
-from datetime import datetime
-from functools import reduce
-from operator import add
 
 mpl.rcParams["mathtext.fontset"] = "cm"
 mpl.rcParams["font.family"] = "serif"
