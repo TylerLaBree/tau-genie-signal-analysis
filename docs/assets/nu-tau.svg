@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000mm"
+   height="1000mm"
+   viewBox="0 0 1000 1000"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="nu-tau.svg"
+   inkscape:export-filename="nu-tau-stealth.jpg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.18252169"
+     inkscape:cx="736.89872"
+     inkscape:cy="2364.1026"
+     inkscape:window-width="2520"
+     inkscape:window-height="1331"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer3" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient2"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#fa6e4d;stop-opacity:1;"
+         offset="0"
+         id="stop2" />
+      <stop
+         style="stop-color:#f99a7e;stop-opacity:1;"
+         offset="1"
+         id="stop3" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2"
+       id="linearGradient3"
+       x1="122.87054"
+       y1="458.40466"
+       x2="877.06989"
+       y2="458.40466"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.127023,0,0,1.1120857,143.62879,-509.78525)" />
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="background">
+    <rect
+       style="opacity:1;fill:#fffaf3;fill-opacity:1;stroke-width:0.265291;stroke-dasharray:none"
+       id="rect4"
+       width="1000"
+       height="1000"
+       x="-1.110223e-16"
+       y="0"
+       inkscape:label="background" />
+  </g>
+  <g
+     inkscape:label="Particle"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="opacity:1;fill:url(#linearGradient3);fill-opacity:1;stroke-width:0.296676;stroke-dasharray:none;image-rendering:auto"
+       id="path1"
+       cx="707.10681"
+       cy="-7.5842222e-06"
+       r="425"
+       transform="rotate(45)"
+       inkscape:label="circle" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="Text"
+     transform="translate(0,12.600035)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:282.222px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:none;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
+       x="562.15277"
+       y="721.7868"
+       id="text3-8"
+       inkscape:label="tau"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         x="562.15277"
+         y="721.7868">τ</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:705.556px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:none;opacity:1;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
+       x="297.51465"
+       y="659.05225"
+       id="text3"
+       inkscape:label="nu"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:705.556px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#fffaf3;fill-opacity:1;stroke-width:0.265"
+         x="297.51465"
+         y="659.05225">ν</tspan></text>
+  </g>
+</svg>
