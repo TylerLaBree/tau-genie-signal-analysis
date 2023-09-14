@@ -1,8 +1,8 @@
-# tau-efficiency
-
 <p align="center">
-  <img src="https://raw.githubusercontent.com/tylerlabree/tau-efficiency/blob/main/docs/assets/nu-tau.svg"  width="300" height="300" alt="banner"/>
+  <img src="https://raw.githubusercontent.com/TylerLaBree/tau-efficiency/main/docs/assets/nu-tau.svg"  width="150" height="150"/>
 </p>
+
+# tau-efficiency
 
 Various tools for analyzing DUNE tau events.
 
