@@ -12,3 +12,5 @@ sample_size = 10000
 fig = get_charged_hadron_count_histogram_split(sample_size) 
 fig.show()
 fig.savefig("/nashome/t/tlabree/img/"+today+"/charged_hadron_count.svg")
+
+input("Press Enter to continue...")
