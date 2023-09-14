@@ -453,7 +453,40 @@ def get_one_parameter_histogram(data, datum_labels, edge_colors, x_label, y_labe
   dunestyle.Simulation(ax=ax)
   return fig
 
-# TODO: Write get_two_parameter_profile_histogram
+def get_scatter_plot(xs_data, ys_data, datum_labels, colors, x_label, y_label, x_limits, y_limits):
+  fig, ax = plt.subplots()
+  for (xs, ys, datum_label, color) in zip(xs_data, ys_data, datum_labels, colors):
+    ax.scatter(xs, ys, c=color, label=datum_label, marker=".")
+  ax.set_xlabel(x_label)
+  ax.set_ylabel(y_label)
+  ax.set_xlim(x_limits[0], x_limits[1])
+  ax.set_ylim(y_limits[0], y_limits[1])
+  ax.legend()
+  dunestyle.Simulation(ax=ax)
+  return fig
+
+def get_profile_histogram(xs_data, ys_data, datum_labels, colors, x_label, y_label, x_limits, y_limits, number_bins):
+  fig, ax = plt.subplots()
+  for (xs, ys, datum_label, color) in zip(xs_data, ys_data, datum_labels, colors):
+    x_bin_width = (x_limits[1] - x_limits[0])/number_bins
+    x_bin_centers = np.linspace(x_limits[0] + x_bin_width/2, x_limits[1] + x_bin_width/2, number_bins, endpoint=False)
+    x_bin_errors = [x_bin_width/2]*number_bins
+    binned_ys = [[y for (x,y) in zip(xs, ys) if x_bin_center - x_bin_width/2 <= x < x_bin_center + x_bin_width/2] for x_bin_center in x_bin_centers]
+    y_counts = [len(ys) if len(ys) > 1 else 2 for ys in binned_ys]
+    y_sums = [sum(ys) if len(ys) > 1 else 0 for ys in binned_ys]
+    y_squared_sums = [sum(map(lambda y: y**2, ys)) if len(ys) > 1 else 0 for ys in binned_ys]
+    y_averages = list(map(lambda a, b: a/b, y_sums, y_counts))
+    y_squared_averages = list(map(lambda a, b: a/b, y_squared_sums, y_counts))
+    y_variances = [y_count/(y_count - 1) * (y_squared_average - y_average**2) for (y_count, y_average, y_squared_average) in zip(y_counts, y_averages, y_squared_averages)]
+    y_errors = list(map(lambda a: a**(1/2)/2, y_variances))
+    ax.errorbar(x_bin_centers, y_averages, yerr=y_errors, xerr=x_bin_errors, c=color, label=datum_label, fmt='o')
+  ax.set_xlabel(x_label)
+  ax.set_ylabel(y_label)
+  ax.set_xlim(x_limits[0], x_limits[1])
+  ax.set_ylim(y_limits[0], y_limits[1])
+  ax.legend()
+  dunestyle.Simulation(ax=ax)
+  return fig
 
 
 ### ---GENIE Comparison Analysis-------------------------------------------- ###
@@ -642,6 +675,44 @@ def get_charged_hadron_angles_1prong_1pi0_min_background_histogram(sample_size):
                                      "Angle (rad)", "Events (PDF)",
                                      (0,3.1415), 100)
 
-# TODO: Make 2D profile histogram comparing energy and angle for signal and min background.
-# Can also make a simple scatter plot.
+def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_scatter(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  decay_ys = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  #nuclear_xs = flatten([energies for energies in tau_dunesw["nuclear_charged_hadron_energies"]])
+  #nuclear_ys = flatten([angles for angles in tau_dunesw["nuclear_charged_hadron_angles"]])
+  nuclear_xs = flatten_1d([[energy for (energy, angle) in zip(energies, angles) if angle == min(angles)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  nuclear_ys = flatten_1d([[angle for (energy, angle) in zip(energies, angles) if angle == min(angles)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  return get_scatter_plot([decay_xs, nuclear_xs], [decay_ys, nuclear_ys],
+                          [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "charged hadrons"],
+                          dune_colors[0:2],
+                          "Energy (GeV)", "Angle (rad)",
+                          (0,100), (0,3.1415))
+
+def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_profile_histogram(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  decay_ys = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  nuclear_xs = flatten_1d([[energy for (energy, angle) in zip(energies, angles) if angle == min(angles)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  nuclear_ys = flatten_1d([[angle for (energy, angle) in zip(energies, angles) if angle == min(angles)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  return get_profile_histogram([decay_xs, nuclear_xs], [decay_ys, nuclear_ys],
+                               [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "min angle charged hadrons"],
+                               dune_colors[0:2],
+                               "Energy (GeV)", "Angle (rad)",
+                               (0,20), (0,3.1415/2), 40)
+
+def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_energy_profile_histogram(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  decay_ys = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  nuclear_xs = flatten_1d([[angle for (energy, angle) in zip(energies, angles) if energy == min(energies)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  nuclear_ys = flatten_1d([[energy for (energy, angle) in zip(energies, angles) if energy == min(energies)] for (energies, angles) in zip(tau_dunesw["nuclear_charged_hadron_energies"], tau_dunesw["nuclear_charged_hadron_angles"]) if angles not in [None,[]]])
+  return get_profile_histogram([decay_xs, nuclear_xs], [decay_ys, nuclear_ys],
+                               [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "min energy charged hadrons"],
+                               dune_colors[0:2],
+                               "Angle (rad)", "Energy (GeV)",
+                               (0,3.1415), (0,5), 40)
 
