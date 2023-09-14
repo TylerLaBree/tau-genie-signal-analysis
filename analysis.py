@@ -453,6 +453,8 @@ def get_one_parameter_histogram(data, datum_labels, edge_colors, x_label, y_labe
   dunestyle.Simulation(ax=ax)
   return fig
 
+# TODO: Write get_two_parameter_profile_histogram
+
 
 ### ---GENIE Comparison Analysis-------------------------------------------- ###
 
@@ -639,4 +641,7 @@ def get_charged_hadron_angles_1prong_1pi0_min_background(sample_size):
                                      [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "min angle charged hadrons"], dune_colors[0:2],
                                      "Angle (rad)", "Events (PDF)",
                                      (0,3.1415), 100)
+
+# TODO: Make 2D profile histogram comparing energy and angle for signal and min background.
+# Can also make a simple scatter plot.
 
