@@ -9,7 +9,7 @@
    id="svg1"
    inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
    sodipodi:docname="nu-tau.svg"
-   inkscape:export-filename="nu-tau-stealth.jpg"
+   inkscape:export-filename="nu-tau-2.svg"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -28,10 +28,10 @@
      inkscape:deskcolor="#505050"
      inkscape:document-units="mm"
      inkscape:zoom="0.18252169"
-     inkscape:cx="736.89872"
-     inkscape:cy="2364.1026"
-     inkscape:window-width="2520"
-     inkscape:window-height="1331"
+     inkscape:cx="734.15932"
+     inkscape:cy="2366.842"
+     inkscape:window-width="1526"
+     inkscape:window-height="1218"
      inkscape:window-x="26"
      inkscape:window-y="23"
      inkscape:window-maximized="0"
@@ -64,7 +64,8 @@
   <g
      inkscape:groupmode="layer"
      id="layer2"
-     inkscape:label="background">
+     inkscape:label="background"
+     style="display:none">
     <rect
        style="opacity:1;fill:#fffaf3;fill-opacity:1;stroke-width:0.265291;stroke-dasharray:none"
        id="rect4"
@@ -94,7 +95,7 @@
      transform="translate(0,12.600035)">
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:282.222px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:none;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:282.222px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
        x="562.15277"
        y="721.7868"
        id="text3-8"
@@ -105,11 +106,12 @@
          y="721.7868">τ</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:705.556px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:none;opacity:1;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:705.556px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;display:inline;opacity:1;fill:#fffaf3;fill-opacity:1;stroke-width:0.264999;stroke-dasharray:none"
        x="297.51465"
        y="659.05225"
        id="text3"
-       inkscape:label="nu"><tspan
+       inkscape:label="nu"
+       sodipodi:insensitive="true"><tspan
          sodipodi:role="line"
          id="tspan3"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:705.556px;font-family:FreeSerif;-inkscape-font-specification:'FreeSerif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#fffaf3;fill-opacity:1;stroke-width:0.265"
