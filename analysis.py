@@ -617,3 +617,26 @@ def get_charged_hadron_count_histogram_split(sample_size):
                                      "Prong (# of charged hadrons)", "Number of events",
                                      (0,10), 10)
 
+
+### --Hadronic 1-prong 1pi0 channel----------------------------------------- ###
+
+def get_charged_hadron_angles_1prong_1pi0(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  decay_data = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  nuclear_data = flatten([angles for angles in tau_dunesw["nuclear_charged_hadron_angles"]])
+  return get_one_parameter_histogram([decay_data, nuclear_data],
+                                     [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "charged hadrons"], dune_colors[0:2],
+                                     "Angle of charged hadrons (rad)", "Number of events",
+                                     (0,3.1415), 100)
+
+def get_charged_hadron_angles_1prong_1pi0_min_background(sample_size):
+  tau_dunesw = read_charged_hadron_kinematics(sample_size)
+  tau_dunesw.update(read_topologies(sample_size))
+  decay_data = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
+  nuclear_data = [min(angles) for angles in tau_dunesw["nuclear_charged_hadron_angles"] if angles not in [None,[]]]
+  return get_one_parameter_histogram([decay_data, nuclear_data],
+                                     [r"$\tau\ \to\ h^- \pi^0 \nu_\tau$" "\n" "charged hadrons", "atomic interaction" "\n" "min angle charged hadrons"], dune_colors[0:2],
+                                     "Angle (rad)", "Events (PDF)",
+                                     (0,3.1415), 100)
+
