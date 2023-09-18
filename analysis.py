@@ -195,6 +195,9 @@ def get_is_interaction_topology(datatype, particle):
   return get_is_final_state(datatype, particle) \
          and get_is_particle_descendant(get_is_initial_atom, datatype, particle)
 
+def get_is_charged_hadron(datatype, particle):
+  return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"]
+
 def get_is_signal_charged_hadron(datatype, particle):
   return get_name(datatype, particle) in ["pi+", "pi-", "K+", "K-"] \
          and get_is_lepton_decay_topology(datatype, particle)
@@ -218,6 +221,13 @@ def get_momentum(four_momentum):
 def get_energy(four_momentum):
   return four_momentum[3]
 
+def get_normalized_vector(v):
+  return [elt/magnitude(v) for elt in v]
+
+def get_transverse_momentum(momentum, beamline_direction):
+  beamline_direction = get_normalized_vector(beamline_direction)
+  return magnitude(get_cross_product(momentum, beamline_direction))
+
 def magnitude(v):
   if len(v) != 3:
     print("ERROR: vector not the right length")
@@ -229,6 +239,12 @@ def dot_product(u, v):
     print("ERROR: vector not the right length")
     return 0
   return sum(i[0] * i[1] for i in zip(u, v))
+
+def get_cross_product(u, v):
+  return [get_determinant_2d([u[i], u[j]], [v[i], v[j]]) for (i,j) in [(1,2), (0,2), (0,1)]]
+
+def get_determinant_2d(a, b):
+  return a[0]*b[1] - a[1]*b[0]
 
 def angle(u, v):
   return np.arccos(dot_product(u, v)/magnitude(u)/magnitude(v))
@@ -286,6 +302,8 @@ def get_simple_interaction_type(interaction_type):
     if possible_name in interaction_type.upper():
       return possible_name
 
+def get_total_transverse_momentum(momenta, beamline_direction):
+  return get_transverse_momentum(sum_vectors(momenta), beamline_direction)
 
 ### --Event Loop Logic------------------------------------------------------ ###
 
@@ -401,6 +419,15 @@ def get_tau_decay_type(tau_decay_product_set):
     if tau_decay_product_set in possible_decay_product_sets:
       return possible_decay_product_name
   return None
+
+def sum_vectors(vs):
+  if len(vs) == 0:
+    return [0,0,0]
+  acc = [0]*len(vs[0])
+  for v in vs:
+    for i in range(len(v)):
+      acc[i] += v[i]
+  return acc
 
 def flatten_1d(list_of_lists):
   return [row[0] if len(row)==1 else None for row in list_of_lists]
@@ -604,6 +631,8 @@ def read_charged_hadron_kinematics(sample_size):
   tau_dunesw["initial_neutrino_four_momenta"] = flatten(tau_dunesw["initial_neutrino_four_momenta"])
   tau_dunesw["decay_charged_hadron_energies"] = [list(map(get_energy, row)) for row in tau_dunesw["decay_charged_hadron_four_momenta"]]
   tau_dunesw["nuclear_charged_hadron_energies"] =[list(map(get_energy, row)) for row in tau_dunesw["nuclear_charged_hadron_four_momenta"]] 
+  tau_dunesw["decay_charged_hadron_momenta"] = [list(map(get_momentum, row)) for row in tau_dunesw["decay_charged_hadron_four_momenta"]]
+  tau_dunesw["nuclear_charged_hadron_momenta"] =[list(map(get_momentum, row)) for row in tau_dunesw["nuclear_charged_hadron_four_momenta"]] 
   tau_dunesw["decay_charged_hadron_angles"] = get_angles_from_momenta(tau_dunesw["decay_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
   tau_dunesw["nuclear_charged_hadron_angles"] = get_angles_from_momenta(tau_dunesw["nuclear_charged_hadron_four_momenta"], tau_dunesw["initial_neutrino_four_momenta"])
   return tau_dunesw
