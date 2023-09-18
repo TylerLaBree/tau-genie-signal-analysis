@@ -655,7 +655,7 @@ def get_charged_hadron_count_histogram_split(sample_size):
 
 ### --Hadronic 1-prong 1pi0 channel----------------------------------------- ###
 
-def get_charged_hadron_angles_1prong_1pi0_histogram(sample_size):
+def get_charged_hadron_angle_1prong_1pi0_histogram(sample_size):
   tau_dunesw = read_charged_hadron_kinematics(sample_size)
   tau_dunesw.update(read_topologies(sample_size))
   decay_data = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
@@ -665,7 +665,7 @@ def get_charged_hadron_angles_1prong_1pi0_histogram(sample_size):
                                      "Angle of charged hadrons (rad)", "Number of events",
                                      (0,3.1415), 100)
 
-def get_charged_hadron_angles_1prong_1pi0_min_background_histogram(sample_size):
+def get_charged_hadron_angle_1prong_1pi0_min_background_histogram(sample_size):
   tau_dunesw = read_charged_hadron_kinematics(sample_size)
   tau_dunesw.update(read_topologies(sample_size))
   decay_data = flatten([angles for (angles,decay_type) in zip(tau_dunesw["decay_charged_hadron_angles"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
@@ -675,7 +675,7 @@ def get_charged_hadron_angles_1prong_1pi0_min_background_histogram(sample_size):
                                      "Angle (rad)", "Events (PDF)",
                                      (0,3.1415), 100)
 
-def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_scatter(sample_size):
+def get_charged_hadron_angle_vs_energy_1prong_1pi0_min_angle_scatter(sample_size):
   tau_dunesw = read_charged_hadron_kinematics(sample_size)
   tau_dunesw.update(read_topologies(sample_size))
   decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
@@ -690,7 +690,7 @@ def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_scatter(sample_siz
                           "Energy (GeV)", "Angle (rad)",
                           (0,100), (0,3.1415))
 
-def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_profile_histogram(sample_size):
+def get_charged_hadron_angle_vs_energy_1prong_1pi0_min_angle_profile_histogram(sample_size):
   tau_dunesw = read_charged_hadron_kinematics(sample_size)
   tau_dunesw.update(read_topologies(sample_size))
   decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
@@ -703,7 +703,7 @@ def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_angle_profile_histogram(
                                "Energy (GeV)", "Angle (rad)",
                                (0,20), (0,3.1415/2), 40)
 
-def get_charged_hadron_angles_vs_energy_1prong_1pi0_min_energy_profile_histogram(sample_size):
+def get_charged_hadron_energy_vs_angle_1prong_1pi0_min_energy_profile_histogram(sample_size):
   tau_dunesw = read_charged_hadron_kinematics(sample_size)
   tau_dunesw.update(read_topologies(sample_size))
   decay_xs = flatten([energies for (energies,decay_type) in zip(tau_dunesw["decay_charged_hadron_energies"], tau_dunesw["tau_decay_types"]) if decay_type == "h- pi0 nu(tau)"])
