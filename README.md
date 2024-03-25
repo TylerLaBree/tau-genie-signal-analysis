@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/TylerLaBree/tau-efficiency/main/docs/assets/nu-tau.svg"  width="150" height="150"/>
 </p>
 
-# tau-efficiency
+# tau-genie-signal-analysis
 
 Various tools for analyzing DUNE tau events.
 
